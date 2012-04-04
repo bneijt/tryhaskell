@@ -4,8 +4,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.style.ForegroundColorSpan;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
@@ -25,25 +28,27 @@ public class TryhaskellActivity extends Activity implements OnKeyListener {
 			 haskellLine = code[0];
 			 return api.send(haskellLine);
 		 }
+		 protected void outputColored(String text, int color) {
+             outputConsole.append(text);
+		     Spannable str = (Spannable) outputConsole.getText();
+		     str.setSpan(new ForegroundColorSpan(color), str.length() - text.length(), str.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+		 }
 	     protected void onPostExecute(JSONObject result) {
 	         try {
 	        	 if(result != null) {
 	        		 if (result.has("error")) {
-	        			 outputConsole.append(result.getString("error"));
+	        		     outputColored(result.getString("error"), Color.RED);
+	        			 outputConsole.append("\n");
 	        			 return;
 	        		 }
 	        		 if(result.has("expr")) {
 	        			 outputConsole.append(result.getString("expr"));
 	        		 }
 	        		 if(result.has("type")) {
-	        			 outputConsole.append(" :: " + result.getString("type"));
+	        		     outputColored(" :: " + result.getString("type"), Color.BLUE);
 	        		 }
 	        		 if(result.has("result")) {
 	        			 outputConsole.append("\n");
-//	        			 SpannableString text = new SpannableString("Lorem ipsum dolor sit amet");  
-//	        			// make "Lorem" (characters 0 to 5) red  
-//	        			text.setSpan(new ForegroundColorSpan(Color.RED), 0, 5, 0);  
-//	        			textView.setText(text, BufferType.SPANNABLE);
 	        			 outputConsole.append(result.getString("result"));
 	        			 outputConsole.append("\n");
 	        		 }
@@ -52,7 +57,6 @@ public class TryhaskellActivity extends Activity implements OnKeyListener {
 				outputConsole.append("Error");
 			}
 	     }
-
 	 }
 
 	/** Called when the activity is first created. */
