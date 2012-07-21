@@ -1,25 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:id="@+id/scrollView1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" >
-<LinearLayout 
-    android:layout_width="fill_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical" >
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/scrollView1"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content" >
 
-    <TextView
-        android:id="@+id/outputConsole"
+    <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:text="" android:typeface="monospace" android:isScrollContainer="true"/>
+        android:layout_height="wrap_content"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/outputConsole"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:isScrollContainer="true"
+            android:text=""
+            android:typeface="monospace" />
 
         <AutoCompleteTextView
             android:id="@+id/inputLine"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:layout_weight="0.69"
-            android:inputType="text|textNoSuggestions">
+            android:inputType="text|textNoSuggestions" >
+
             <requestFocus />
         </AutoCompleteTextView>
 
@@ -29,8 +33,6 @@
             android:layout_height="wrap_content"
             android:layout_weight="0.69"
             android:text="@string/attribution" />
+    </LinearLayout>
 
-
-
-</LinearLayout>
-        </ScrollView>
+</ScrollView>
