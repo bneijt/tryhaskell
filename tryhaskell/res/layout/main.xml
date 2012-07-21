@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/scrollView1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" >
+<LinearLayout 
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical" >
@@ -8,7 +12,7 @@
         android:id="@+id/outputConsole"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:text="" android:typeface="monospace" />
+        android:text="" android:typeface="monospace" android:isScrollContainer="true"/>
 
         <AutoCompleteTextView
             android:id="@+id/inputLine"
@@ -27,4 +31,6 @@
             android:text="@string/attribution" />
 
 
+
 </LinearLayout>
+        </ScrollView>
