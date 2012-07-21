@@ -97,10 +97,10 @@ public class TryhaskellActivity extends Activity implements OnKeyListener {
                 && event.getAction() == KeyEvent.ACTION_UP) {
             String haskellToTry = inputLine.getText().toString();
             new TryHaskellTask().execute(haskellToTry);
-            if(suggestions.getCount() > 20) {
-                suggestions.remove(suggestions.getItem(0));
-            }
             if(suggestions.getPosition(haskellToTry) < 0) {
+                if(suggestions.getCount() > 20) {
+                    suggestions.remove(suggestions.getItem(0));
+                }
                 suggestions.add(haskellToTry);
             }
             inputLine.setText("");
