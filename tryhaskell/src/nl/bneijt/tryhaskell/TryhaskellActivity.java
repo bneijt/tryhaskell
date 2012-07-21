@@ -8,6 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -78,12 +79,11 @@ public class TryhaskellActivity extends Activity implements OnKeyListener {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
-
         api = new Api();
-        
-        suggestions = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, new ArrayList<String>());
-        outputConsole = (TextView) findViewById(R.id.outputConsole);
 
+        suggestions = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, new ArrayList<String>());
+
+        outputConsole = (TextView) findViewById(R.id.outputConsole);
         inputLine = (AutoCompleteTextView) findViewById(R.id.inputLine);
         
         inputLine.setAdapter(suggestions);
@@ -100,7 +100,9 @@ public class TryhaskellActivity extends Activity implements OnKeyListener {
             if(suggestions.getCount() > 20) {
                 suggestions.remove(suggestions.getItem(0));
             }
-            suggestions.add(haskellToTry);
+            if(suggestions.getPosition(haskellToTry) < 0) {
+                suggestions.add(haskellToTry);
+            }
             inputLine.setText("");
             return true;
         }

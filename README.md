@@ -12,3 +12,10 @@ The following list is an ordered collection of what still needs to be done
 -   Add a lesson/lesson texts
 -   See if we can get multple haskell lines to work, or have an easy way of editing previous lines
 
+BUGS
+
+- Add scrolling
+- Suggestions are added twice
+- Suggestions are white on white
+
+
