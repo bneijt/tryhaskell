@@ -1,14 +1,12 @@
 package nl.bneijt.tryhaskell;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -48,22 +46,36 @@ public class TryhaskellActivity extends Activity implements OnKeyListener {
         protected void onPostExecute(JSONObject result) {
             try {
                 if (result != null) {
-                    if (result.has("error")) {
-                        outputColored(result.getString("error"), Color.RED);
+                    if(result.has("success")) {
+                        result = result.getJSONObject("success");
+                        if (result.has("expr")) {
+                            outputConsole.append(result.getString("expr"));
+                            outputConsole.append("\n");
+                        }
+
+                        if (result.has("value")) {
+                            outputConsole.append(result.getString("expr"));
+                        }
+
+                        if (result.has("type")) {
+                            outputColored(" :: " + result.getString("type"),
+                                    Color.CYAN);
+                        }
+
+                        if (result.has("stdout")) {
+                            JSONArray stdout = result.getJSONArray("stdout");
+                            for(int i = 0; i < stdout.length(); ++i) {
+                                outputConsole.append("\n");
+                                outputConsole.append(stdout.getString(i));
+                            }
+                        }
                         outputConsole.append("\n");
-                        return;
-                    }
-                    if (result.has("expr")) {
-                        outputConsole.append(result.getString("expr"));
-                    }
-                    if (result.has("type")) {
-                        outputColored(" :: " + result.getString("type"),
-                                Color.CYAN);
-                    }
-                    if (result.has("result")) {
-                        outputConsole.append("\n");
-                        outputConsole.append(result.getString("result"));
-                        outputConsole.append("\n");
+                    } else {
+                        if (result.has("error")) {
+                            outputColored(result.getString("error"), Color.RED);
+                            outputConsole.append("\n");
+                            return;
+                        }
                     }
                 } else {
                     outputConsole.append("Connection error\n");
@@ -80,17 +92,32 @@ public class TryhaskellActivity extends Activity implements OnKeyListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         api = new Api();
-
-        suggestions = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, new ArrayList<String>());
+        ArrayList<String> oldSuggestions = null;
+        if(savedInstanceState != null ) {
+            oldSuggestions = savedInstanceState.getStringArrayList("suggestions");
+        }
+        if(oldSuggestions == null) {
+            oldSuggestions = new ArrayList<String>();
+        }
+        suggestions = new ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, oldSuggestions);
 
         outputConsole = (TextView) findViewById(R.id.outputConsole);
         inputLine = (AutoCompleteTextView) findViewById(R.id.inputLine);
-        
+
         inputLine.setAdapter(suggestions);
         inputLine.setOnKeyListener(this);
 
     }
 
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        //Save suggestions to state
+        ArrayList<String> suggestionsList = new ArrayList<String>();
+        for (int index = 0; index < suggestions.getCount(); index++) {
+            suggestionsList.add(suggestions.getItem(index));
+        }
+        outState.putStringArrayList("suggestions", suggestionsList);
+    };
     @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_ENTER

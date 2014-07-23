@@ -4,15 +4,21 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.protocol.HTTP;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -22,18 +28,19 @@ import android.util.Log;
 public class Api {
 
     public JSONObject send(String haskellCode) {
-        String urlEncodedHaskell = URLEncoder.encode(haskellCode);
-        String possiblyJson = connect("http://tryhaskell.org/haskell.json?method=eval&pad=handleJSON&expr="
-                + urlEncodedHaskell + "&random=" + Math.random());
+        HttpPost requestObject;
+        try {
+            requestObject = Api.requestObjectFor(haskellCode);
+        } catch (UnsupportedEncodingException e1) {
+            Log.d("JSON", "Unsupported encoding");
+            return null;
+        }
+
+        String possiblyJson = connect(requestObject);
         if (possiblyJson != null) {
             Log.d("JSON", possiblyJson);
             try {
-                if (possiblyJson.length() < "handleJSON(".length()) {
-                    return null;
-                }
-                String jsonBody = possiblyJson.substring(
-                        "handleJSON(".length(), possiblyJson.length() - 1);
-                return (JSONObject) new JSONTokener(jsonBody).nextValue();
+                return (JSONObject) new JSONTokener(possiblyJson).nextValue();
             } catch (JSONException e) {
                 Log.d(Api.class.getName(), "Error parsing result", e);
                 return null;
@@ -42,19 +49,24 @@ public class Api {
         return null;
     }
 
-    public static String connect(String url) {
+    public static HttpPost requestObjectFor(String haskellCode) throws UnsupportedEncodingException {
+
+        HttpPost post = new HttpPost("http://tryhaskell.org/eval");
+        List<BasicNameValuePair> data = Arrays.asList(new BasicNameValuePair("exp", haskellCode));
+
+        post.setEntity(new UrlEncodedFormEntity(data));
+        return post;
+    }
+
+    public static String connect(HttpPost httpPost) {
         String result = null;
         HttpClient httpclient = new DefaultHttpClient();
-
-        // Prepare a request object
-
-        HttpGet httpget = new HttpGet(url);
         // Execute the request
         try {
-            HttpResponse response = httpclient.execute(httpget);
+            HttpResponse response = httpclient.execute(httpPost);
 
             // Examine the response status
-            if(response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
                 return null;
             }
 
