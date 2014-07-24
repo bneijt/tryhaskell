@@ -12,7 +12,7 @@ The following list is an ordered collection of what still needs to be done
 -   Add a spinner or busy indicator for requests
 
 Not planned
--   Add a lesson/lesson texts (Already done by [Learn Haskell Android app](https://play.google.com/store/apps/details?id=hu.dreamland_swh.learnhaskell)
+-   Add a lesson/lesson texts (Already done by [Learn Haskell Android app](https://play.google.com/store/apps/details?id=hu.dreamland_swh.learnhaskell) )
 
 
 
