@@ -54,7 +54,7 @@ public class TryhaskellActivity extends Activity implements OnKeyListener {
                         }
 
                         if (result.has("value")) {
-                            outputConsole.append(result.getString("expr"));
+                            outputConsole.append(result.getString("value"));
                         }
 
                         if (result.has("type")) {
